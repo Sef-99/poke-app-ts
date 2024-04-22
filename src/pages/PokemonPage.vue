@@ -21,6 +21,7 @@
     </div>
   </div>
 </template>
+
 <script setup lang="ts">
 import PokemonOptions from '@/components/PokemonOptions.vue';
 import PokemonPictures from '@/components/PokemonPictures.vue';
@@ -33,36 +34,36 @@ import {
 } from '@/logic/pokemonUtils.js';
 import pokeApi from '@/logic/api/axiosConfig.js';
 import type { Pokemon } from '@/interface/pokemon';
+import { usePokemonStore } from '@/stores/pokemon';
+import { storeToRefs } from 'pinia';
+import { usePokemoms } from '@/composables/usePokemons';
 
-let apiResult;
-const pokemonOptionsList = ref<Pokemon[]>([]);
-const hasTried = ref(false);
-const hasGuessedCorrectly = ref(false);
-const message = ref('');
-const pokemonId = ref();
-let pokemonToGuess: Pokemon;
+// const pokemonStore = usePokemonStore();
+// const {
+//   pokemonOptionsList,
+//   hasTried,
+//   hasGuessedCorrectly,
+//   message,
+//   pokemonId,
+// } = storeToRefs(pokemonStore);
+// let apiResult: Pokemon[];
+// // const pokemonOptionsList = ref<Pokemon[]>([]);
+// // const hasTried = ref(false);
+// // const hasGuessedCorrectly = ref(false);
+// // const message = ref('');
+// // const pokemonId = ref();
+// let pokemonToGuess: Pokemon;
 
-async function init() {
-  apiResult = await getPokemons(pokeApi);
-  pokemonOptionsList.value = apiResult;
-  console.log(pokemonOptionsList);
-  pokemonToGuess = getPokemonToGuess(pokemonOptionsList.value);
-  pokemonId.value = pokemonToGuess.id;
-  hasGuessedCorrectly.value = false;
-  hasTried.value = false;
-  message.value = '';
-}
-
-function checkAnswer(guess: string) {
-  hasTried.value = true;
-  hasGuessedCorrectly.value = checkIfCorrectGuess(guess, pokemonToGuess.name);
-  message.value = messageGuess(hasGuessedCorrectly.value, pokemonToGuess.name);
-}
-
-async function newGame() {
-  pokemonId.value = 0;
-  await init();
-}
+const {
+  pokemonOptionsList,
+  hasTried,
+  hasGuessedCorrectly,
+  message,
+  pokemonId,
+  init,
+  checkAnswer,
+  newGame,
+} = usePokemoms();
 
 onMounted(async () => {
   init();
